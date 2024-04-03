@@ -16,19 +16,14 @@ class VerifyEmailController extends Controller
         $user = User::find($request->route('id'));
 
         if ($user->hasVerifiedEmail()) {
-            return response()->json([
-                'status' => false,
-            ],400);
+            return redirect(env('FRONT_URL') . '/email/verify/already-success');
         }
 
         if ($user->markEmailAsVerified()) {
             event(new Verified($user));
         }
-        
 
-        return response()->json([
-            'status' => true,
-        ]);
+        return redirect(env('FRONT_URL') . '/email/verify/success');
     }
 
     public function resend(Request $request)
@@ -36,6 +31,6 @@ class VerifyEmailController extends Controller
         $request->user()->sendEmailVerificationNotification();
         return response()->json([
             'status' => true,
-        ]);
+        ], 200);
     }
 }

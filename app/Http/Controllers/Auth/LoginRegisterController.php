@@ -31,6 +31,7 @@ class LoginRegisterController extends Controller
         
         $response = [
             'status' => true,
+            'token' => $user->createToken($request->email)->plainTextToken
         ];
 
         return response()->json($response, 200);

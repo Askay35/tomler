@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\SubdomainController;
+use App\Models\Subdomain;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +15,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::domain('{account}.' . explode('://',config('app.url'))[1])->group(function(){
+    Route::get('/', [SubdomainController::class,'index']);
+})->where('account', '[0-9A-Za-z]+');

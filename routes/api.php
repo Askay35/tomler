@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginRegisterController;
+use App\Http\Controllers\SubdomainController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerifyEmailController;
+use App\Models\Subdomain;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,12 +26,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
     Route::controller(LoginRegisterController::class)->group(function () {
-        Route::post('/register', 'register');
-        Route::post('/login', 'login');
+        Route::post('/register', 'register')->middleware(['throttle:6,1']);
+        Route::post('/login', 'login')->middleware(['throttle:10,1']);
     });
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [LoginRegisterController::class, 'logout']);
+        
     });
 
     Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
@@ -37,4 +41,16 @@ Route::prefix('auth')->group(function () {
 
     // Resend link to verify email
     Route::post('/email/verify/resend', [VerifyEmailController::class, 'resend'])->middleware(['auth:api', 'throttle:6,1'])->name('verification.send');
+});
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('user')->group(function () {
+        Route::get('/', [UserController::class, 'index']);
+    })->middleware(['signed']);
+
+    Route::put('/subdomain', [SubdomainController::class, 'store']);
+    Route::get('/subdomain', [SubdomainController::class, 'show']);
+    Route::put('/subdomain/update', [SubdomainController::class, 'update']);
+    Route::delete('/subdomain', [SubdomainController::class, 'destroy']);
 });
