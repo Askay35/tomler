@@ -24,13 +24,14 @@ class SubdomainStoreRequest extends FormRequest
     {
         return [
             'name'=>'required|alpha_num:ascii|max:63',
+            'address'=>'required|alpha_num|max:64',
             'NETWORK_PASSPHRASE'=> 'required|string',
             'URI_REQUEST_SIGNING_KEY'=> 'required|string',
             'SIGNING_KEY'=> 'required|string', 
             'FEDERATION_SERVER'=> 'required|string',
             'WEB_AUTH_ENDPOINT'=> 'required|string', 
             'TRANSFER_SERVER'=> 'string',
-            'CURRENCIES'=>'array'
+            'CURRENCIES'=>'array',
         ];
     }
 

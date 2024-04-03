@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\StellarHelper;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
@@ -17,3 +18,10 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
+
+
+// Artisan::command('stellar', function () {
+    // $stellar = new StellarHelper;
+    // var_dump(StellarHelper::getOperations('desc', 2));
+    // var_dump(StellarHelper::checkPayment("GAUEEYOUENSQLAFWSRPHABROV263WV5DKSH23ITC4BVY4GEWLBSRZUEG", 253.00, 800));
+// });

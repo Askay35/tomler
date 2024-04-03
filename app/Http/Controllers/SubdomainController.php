@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\StellarHelper;
 use App\Http\Requests\SubdomainStoreRequest;
 use App\Models\Subdomain;
+use DateTime;
 use Illuminate\Http\Request;
 
 class SubdomainController extends Controller
@@ -61,10 +63,19 @@ class SubdomainController extends Controller
             ], 400);
         }
         $toml_data = $request->all();
+        if(!StellarHelper::checkPayment($toml_data['address'],config('stellar.payment.price'), config('stellar.payment.time'))){
+            return response()->json([
+                'status'=>false,
+                'message'=>__("custom.no_payment")
+            ], 400);
+        }
         $subdomain_data = ['name'=>$toml_data['name']];
         $subdomain_data['user_id'] = $request->user()->id;
-        $subdomain_data['expiration_date'] = fake()->dateTimeBetween('+6 months', '+1 years');
+        $subdomain_data['expiration_date'] = new DateTime('+1 years');//fake()->dateTimeBetween('+6 months', '+1 years');
+
         unset($toml_data['name']);
+        unset($toml_data['address']);
+
         $subdomain_data['toml'] = json_encode($toml_data);
         $subdomain = Subdomain::create($subdomain_data);
         if(!$subdomain){
@@ -84,6 +95,12 @@ class SubdomainController extends Controller
      */
     public function show(Request $request)
     {
+        if(!$request->user()->subdomain){
+            return response()->json([
+                'status'=>false,
+                'message'=>'User has no subdomain'
+            ], 400);
+        }
         return response()->json(['status'=>true, 'data'=>$request->user()->subdomain->getData()]);
     }
 
